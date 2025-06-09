@@ -49,6 +49,7 @@ then
     VALIDATE $? "Adding user expense"
 else
     echo "user expense already exists... $Y SKipping $N"
+fi
 
 mkdir /app &>>$LOG_FILE_NAME
 VALIDATE $? "Creating app dir"
