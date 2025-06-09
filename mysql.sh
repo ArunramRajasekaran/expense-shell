@@ -43,3 +43,13 @@ VALIDATE $? "Starting MySQL Server"
 
 mysql_secure_installation --set-root-pass ExpenseApp@1
 VALIDATE $? "Setting Root Password"
+
+if [ $? -ne 0 ]
+then
+    echo "mysql root password not setup" &>>$LOG_FILE_NAME
+    mysql_secure_installation --set-root-password ExpenseApp@1
+    VALIDATE $? "Setting Root Password"
+else
+    echo -e "MySQL Root Password already setup.... $Y SKIPPING $N"
+fi
+
