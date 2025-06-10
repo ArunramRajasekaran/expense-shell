@@ -52,7 +52,7 @@ VALIDATE $? "Downloading latest nginx code"
 cd /usr/share/nginx/html &>>$LOG_FILE_NAME
 VALIDATE $? "Moving to html directory"
 
-cd unzip /tmp/frontend.zip &>>$LOG_FILE_NAME
+unzip /tmp/frontend.zip &>>$LOG_FILE_NAME
 VALIDATE $? "unzipping the frontend code"
 
 cp /home/ec2-user /etc/nginx/default.d/expense.conf &>>$LOG_FILE_NAME
