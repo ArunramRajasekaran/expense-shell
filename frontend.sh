@@ -29,27 +29,33 @@ CHECK_ROOT(){
     fi
 }
 
+mkdir -p /var/log/expense-logs
 echo "Script started executing at; $TIMESTAMP" &>>$LOG_FILE_NAME
 
 CHECK_ROOT
-dnf install mysql-server -y &>>LOG_FILE_NAME
-VALIDATE $? "Installing MySQL Server"
 
-systemctl enable mysqld &>>LOG_FILE_NAME
-VALIDATE $? "Enabling MySQL Server"
+dnf install nginx -y
+VALIDATE $? "Installing nginx"
 
-systemctl start mysqld &>>LOG_FILE_NAME
-VALIDATE $? "Starting MySQL Server"
+systemctl enable nginx
+VALIDATE $? "Enabling nginx"
 
-mysql_secure_installation --set-root-password ExpenseApp@1 &>>$LOG_FILE_NAME
-VALIDATE $? "Setting Root Password"
+systemctl start nginx
+VALIDATE $? "Starting nginx"
 
-if [ $? -ne 0 ]
-then
-    echo "mysql root password not setup" &>>$LOG_FILE_NAME
-    mysql_secure_installation --set-root-password ExpenseApp@1
-    VALIDATE $? "Setting Root Password"
-else
-    echo -e "MySQL Root Password already setup.... $Y SKIPPING $N"
-fi
+rm -rf /usr/share/nginx/html/*
+VALIDATE $? "Removing existing nginx code"
 
+curl -o /tmp/frontend.zip https://expense-builds.s3.us-east-1.amazonaws.com/expense-frontend-v2.zip
+VALIDATE $? "Downloading latest nginx code"
+
+cd /usr/share/nginx/html
+VALIDATE $? "Moving to html directory"
+
+cd unzip /tmp/frontend.zip
+VALIDATE $? "unzipping the frontend code"
+
+cp /home/ec2-user /etc/nginx/default.d/expense.conf
+
+systemctl restart nginx
+VALIDATE $? "Restartging nginx"
